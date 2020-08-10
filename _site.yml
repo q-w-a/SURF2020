@@ -1,0 +1,30 @@
+name: "Analysis of Genetic Diversity in Ciliates"
+output_dir: "."
+navbar:
+  title: "Analysis of Genetic Diversity in Ciliates"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Heterozygosity"
+      href: Heterozygosity_Tutorial.html
+    - text: "Read Depth"
+      href: Read_Depth_Tutorial.html
+    - text: "Basic VCF Analysis"
+      href: Basic_VCF_Analysis.html
+    - text: "Nucleotide Diversity"
+      href: Nucleotide_diversity_tutorial.html
+    - text: "Ploidy"
+      href: Ploidy_tutorial.html
+    - text: "Poppr"
+      href: Poppr_tutorial.html
+    - text: "SnpEff"
+      href: SnpEff_tutorial.html
+    - text: "Popgenome"
+      href: Popgenome_tutorial.html
+    - text: "Subsetting to BUSCO Sequences"
+      href: BUSCO_Tutorial.html
+      
+      
+output:
+  html_document:
+    theme: cerulean
