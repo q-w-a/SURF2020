@@ -1,0 +1,62 @@
+---
+title: "Per Individual Read Depth Tutorial"
+author: "Quinn W"
+date: "8/6/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(vcfR)
+
+```
+
+Here, we look at the distribution of the depth of the most abundant allele on a per individual basis. This can be helpful for developing filtering criteria.
+
+First, we'll read in a vcf file. 
+
+
+```{r, message = FALSE, results = 'hide'}
+
+chilo_90 <- read.vcfR("./Data/chilo/all_filtered_chilo_90.vcf")
+
+```
+
+Here is the function to generate the distribution plots for each individual. The red lines correspond to the 15th and 95th percentiles.
+
+```{r}
+
+#takes vcfR object and plots read depth distribution for the most abundant allele
+plot_read_depth <- function(vcf) {
+  #extract allele depths
+  ad <- extract.gt(vcf, element = 'AD')
+  #get depth of the most abundant allele
+  a1 <- masplit(ad, record = 1)
+  tmp <- a1[,1]
+  sums <- apply(a1, MARGIN=2, quantile, probs = c(.15,.95), na.rm=TRUE)
+
+
+  for (i in 1:ncol(ad)) {
+    tmp <- a1[,i]
+    sums <- apply(a1, MARGIN=2, quantile, probs = c(.15,.95), na.rm=TRUE)
+    hist(tmp, breaks=seq(0, max(a1, na.rm = TRUE), by=1), col="#808080", main = substr(colnames(a1)[i], 1, 7), xlab = "Read Depth")
+    abline(v=sums[,i], col=2, lwd=2)
+  
+}
+}
+
+
+```
+
+Now we can look at the per individual read depth for the most abundant allele for this Chilodonella vcf file.
+
+```{r}
+
+plot_read_depth(chilo_90)
+
+```
+

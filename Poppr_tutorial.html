@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Poppr Tutorial</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Analysis of Genetic Diversity in Ciliates</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Heterozygosity_Tutorial.html">Heterozygosity Tutorial</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Poppr Tutorial</h1>
+
+</div>
+
+
+<p>Poppr is a package for population genetic analyses. It is particularly useful for looking at genetic differentiation. In this tutorial, we look at a few ways to visualize the genetic distance between individuals.</p>
+<p>First, we’ll load the needed libraries and data.</p>
+<pre class="r"><code>library(poppr)
+library(vcfR)
+library(tidyverse)
+library(ape)
+library(RColorBrewer)
+library(igraph)
+
+lox_pooled_98_vcfR &lt;- read.vcfR(&quot;./Data/loxodes_pooled/all_filtered_98.vcf&quot;)</code></pre>
+<p>We then need to convert the vcfR object to a genlight object. Genlight objects only support bi-allelic loci. Here, we lost 31 loci that weren’t bi-allelic. It’s important to note how much data lost in this conversion, but in this case, 31 loci isn’t very significant.</p>
+<pre class="r"><code>#converting vcfR object to genlight object 
+lox_pooled_genlight &lt;- vcfR2genlight(lox_pooled_98_vcfR)</code></pre>
+<pre><code>## Warning in vcfR2genlight(lox_pooled_98_vcfR): Found 31 loci with more than two alleles.
+## Objects of class genlight only support loci with two alleles.
+## 31 loci will be omitted from the genlight object.</code></pre>
+<pre class="r"><code>pop(lox_pooled_genlight) &lt;- substr(indNames(lox_pooled_genlight), 1, 6)</code></pre>
+<p>Genlight objects can support individuals of different ploidies, but within a single individual the ploidy must be the same for all loci. Here we set the ploidy to 2.</p>
+<p>We then use the bitwise.dist function to create a distance matrix. The assumptions for the bitwise.dist function are that SNPs are bi-allelic, samples are haploid or diploid, and all samples have the same ploidy.</p>
+<pre class="r"><code>ploidy(lox_pooled_genlight) &lt;- 2
+
+#form distance matrix with the bitwise.dist function from poppr
+lox_dist &lt;- bitwise.dist(lox_pooled_genlight)</code></pre>
+<p>Now, we’ll create a minimum spanning network to visualize the genetic distance between individuals. The minimum spanning network algorithm groups multilocus genotypes by the genetic distances between them.The multilocus genotypes (individuals) are the nodes, and the lengths of the branches represent the genetic distance.</p>
+<pre class="r"><code>#create minimum spanning network using distance matrix
+lox_msn &lt;- poppr.msn(lox_pooled_genlight, lox_dist, showplot = FALSE, include.ties = T)
+
+#lox_msn$populations &lt;- substr(lox_msn$populations, 1, 6)
+
+#create node size value based on number of individuals
+node_size &lt;- rep(2, times = nInd(lox_pooled_genlight))
+
+#set names for nodes
+names(node_size) &lt;- popNames(lox_pooled_genlight)
+
+lox_pooled_genlight$ind.names &lt;- substr(lox_pooled_genlight$ind.names, 1, 6)
+
+#set node size
+vertex_attr(lox_msn$graph)$size &lt;- node_size
+
+#plot minimum spanning network
+set.seed(9)
+plot_poppr_msn(lox_pooled_genlight, lox_msn, palette = brewer.pal(n = nPop(lox_pooled_genlight), name = &quot;Set3&quot;), vertex.label.dist = 1, gadj = 70, pop.leg = FALSE, size.leg = FALSE) </code></pre>
+<p><img src="Poppr_tutorial_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Another way to look at the genetic distance between individuals or populations is principal components analysis (PCA). This involves a rotation the axes to maximize variance between the samples. The SNP data is transformed into principal components, which are uncorrelated variables that are linear combinations of the initial variables. Maximum information is put into the first components. These principal components are the axes that represent the maximal amount of variance.</p>
+<p>When comparing PCA plots, pay close attention to the axis.</p>
+<pre class="r"><code>#remove NA values
+remove &lt;- is.na(glMean(lox_pooled_genlight, alleleAsUnit = FALSE))
+which(remove)
+lox_pooled_genlight_new &lt;- lox_pooled_genlight[, !remove]</code></pre>
+<pre class="r"><code>#perform principal component analysis
+
+#first, keep the nf (number of principal components to be retained) as NULL
+#after looking at the displayed eigenvalues, use a suitable nf value
+lox_pca &lt;- glPca(lox_pooled_genlight_new, nf = 3)
+
+#include the principal components in a data frame
+lox_pca_scores &lt;- as.data.frame(lox_pca$scores)
+#set the populations (in this case, we are looking at differentiation between individuals rather than populations, but it is the same concept)
+lox_pca_scores$pop &lt;- pop(lox_pooled_genlight)
+
+#custom color palette
+my_palette &lt;- c(&quot;#4287f5&quot;, &quot;#42f5e3&quot;, &quot;#4ebf69&quot;, &quot;#cf9c2d&quot;, &quot;#f25d1d&quot;, &quot;#b81111&quot;, &quot;#1f2194&quot;, &quot;#922ce6&quot;, &quot;#b52a5f&quot;, &quot;#416b69&quot;)
+
+#create and show the PCA plot
+lox_plot &lt;- ggplot(lox_pca_scores, aes(x=PC1, y=PC2, colour = pop)) + 
+  geom_point(size=2) +
+  geom_hline(yintercept=0) + 
+  geom_vline(xintercept=0) + 
+  theme_minimal() + 
+  scale_color_manual(values = my_palette) + 
+  labs(title = &quot;PCA Analysis for Loxodes (Transcriptome)&quot;) + 
+  theme(
+    plot.title = element_text(face = &quot;bold&quot;, hjust = .5), 
+    legend.title = element_blank())
+
+lox_plot</code></pre>
+<p><img src="Poppr_tutorial_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Another way to visualize the genetic distance between individuals is to create a dendrogram with bootstrap support. The distance argument takes a function to generate the distance matrix. The bitwise.dist function is compatible with genlight objects. The sample argument is the number of boostrap replicates.</p>
+<pre class="r"><code>aboot(lox_pooled_genlight_new, distance = bitwise.dist, sample = 1000)</code></pre>
+<pre><code>## 
+Running bootstraps:       100 / 1000
+Running bootstraps:       200 / 1000
+Running bootstraps:       300 / 1000
+Running bootstraps:       400 / 1000
+Running bootstraps:       500 / 1000
+Running bootstraps:       600 / 1000
+Running bootstraps:       700 / 1000
+Running bootstraps:       800 / 1000
+Running bootstraps:       900 / 1000
+Running bootstraps:       1000 / 1000
+## Calculating bootstrap values... done.</code></pre>
+<p><img src="Poppr_tutorial_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre><code>## 
+## Phylogenetic tree with 10 tips and 9 internal nodes.
+## 
+## Tip labels:
+##  LKH560, LKH387, LKH375, LKH184, LKH182, LKH200, ...
+## Node labels:
+##  100, 98.5, 98.5, 53.7, 53, 54.4, ...
+## 
+## Rooted; includes branch lengths.</code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

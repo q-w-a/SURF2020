@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Ploidy Tutorial</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Analysis of Genetic Diversity in Ciliates</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Heterozygosity_Tutorial.html">Heterozygosity Tutorial</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Ploidy Tutorial</h1>
+
+</div>
+
+
+<p>First, load the needed libraries and read in the vcf file as a vcfR object.</p>
+<pre class="r"><code>library(tidyverse)
+library(vcfR)
+
+loxodes_pooled_98_10 &lt;- read.vcfR(&quot;./Data/loxodes_pooled/all_filtered_98.vcf&quot;)</code></pre>
+<p>The function get_AB_plot takes a vcfR object as a mandatory argument, the optional argument sample_name, and the optional argument num_samples. The sample name argument includes the given information in the title of the plot. If no sample name (ex: Loxodes (MINID98, Pooled Reference)) is provided, the title will not include the sample name. The num_samples argument filters based on the NS information in the vcf. NS represents the number of samples with data for a particular site. Thus, a higher NS value indicates less missing data for a variant site. This can be a useful filtering criterion.</p>
+<pre class="r"><code>#takes the vcfR object, an optional user argument of the minimum number of samples with data for a variant site to be included, and the sample_name argument (information you want included in the title)
+#plots allele balance between the top 2 most abundant alleles
+
+get_AB_plot &lt;- function(vcf, sample_name = &quot;&quot;, num_samples = 0) {
+  ad &lt;- extract.gt(vcf, element = &#39;AD&#39;) 
+  gt &lt;- extract.gt(vcf, element = &#39;GT&#39;)
+  vcf_tidy &lt;- vcfR2tidy(vcf, single_frame = TRUE, 
+                           info_types = TRUE, 
+                             format_types = TRUE)[[&quot;dat&quot;]]
+  
+  vcf_tidy &lt;- vcf_tidy %&gt;% mutate(ID = paste(CHROM, POS, sep = &quot;_&quot;)) 
+  vcf_filtered &lt;- vcf_tidy %&gt;% filter(NS &gt;= num_samples) %&gt;% pull(ID)
+  
+  #remove homozygous sites so they don&#39;t overwhelm the plot
+  hets &lt;- is_het(gt)
+  is.na( ad[!hets] ) &lt;- TRUE
+  ad1 &lt;- masplit(ad, record = 1)
+  ad2 &lt;- masplit(ad, record = 2)
+  ab1 &lt;- ad1 / (ad1 + ad2)
+  ab2 &lt;- ad2 / (ad1 + ad2)
+  ab1 &lt;- as_tibble(ab1, rownames = &quot;SITE&quot;) %&gt;%
+    pivot_longer(cols = c(2:ncol(ab1)), 
+               names_to = &quot;name&quot;, 
+               values_to = &quot;AF&quot;) %&gt;% 
+    filter(SITE %in% vcf_filtered)
+
+  ab2 &lt;- as_tibble(ab2, rownames = &quot;SITE&quot;) %&gt;%
+    pivot_longer(cols = c(2:ncol(ab2)), 
+               names_to = &quot;name&quot;, 
+               values_to = &quot;AF&quot;) %&gt;% 
+    filter(SITE %in% vcf_filtered)
+  
+  ggplot() + 
+    geom_histogram(data = ab1, 
+                 aes(x = AF), 
+                 fill = &quot;#3271a8&quot;, 
+                 alpha = .75, 
+                 binwidth = .02) + 
+    geom_histogram(data = ab2, 
+                 aes(x = AF), 
+                 fill = &quot;#FFD333&quot;, 
+                 alpha = .75, 
+                 binwidth = .02) +
+    labs(title = paste(&quot;Allele Frequency Distribution for Alleles 1 and 2\n for &quot;, sample_name),
+       x = &quot;Allele Frequency&quot;) + 
+    theme_minimal() +
+    theme(plot.title = element_text(face = &quot;bold&quot;, 
+                                  hjust = .5)) 
+  
+  
+}</code></pre>
+<p>Once the function is loaded, it can be run for any vcfR object.</p>
+<pre class="r"><code>get_AB_plot(loxodes_pooled_98_10, sample_name = &quot;Loxodes (MINID98, Pooled Reference)&quot;)</code></pre>
+<p><img src="Ploidy_tutorial_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>get_AB_plot(loxodes_pooled_98_10, sample_name = &quot;Loxodes (MINID98, Pooled Reference, NS Filter 3)&quot;, num_samples = 3)</code></pre>
+<p><img src="Ploidy_tutorial_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p>Since the function returns a ggplot object, you can add on any modifications to the plot after calling the function. For example, you may want the x axis to show more intervals, or to add vertical lines corresponding to the peaks of the plot. Here we add more breaks to the x axis.</p>
+<pre class="r"><code>get_AB_plot(loxodes_pooled_98_10, 
+            sample_name = &quot;Loxodes (MINID98, Pooled Reference)&quot;) + 
+  scale_x_continuous(limits = c(.1, .9), 
+                     breaks = seq(0, 1, by = .05), 
+                     labels = seq(0, 1, by = .05))</code></pre>
+<p><img src="Ploidy_tutorial_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Filtering based on depth is also something to explore. This function allows the user to input a minimum read depth and maximum read depth for a site to be considered.</p>
+<p>The read depth for a site is considered the average across all individuals.</p>
+<p>It’s good to experiment with different values to see what effect they have on your analyses. A very low read depth can indicate a low expression level or a lack of support for a variant. Meanwhile, a very high read depth can indicate a high expression level or incorrect mapping of the reads of a recent paralog.</p>
+<pre class="r"><code>#takes mandatory argument vcfR object and optional arguments sample_name, mindepth, and maxdepth
+#plots the allele balance between the top 2 most abundant alleles with the given filtering criteria
+get_AB_filtered_depth &lt;- function(vcf, sample_name = &quot;&quot;, mindepth = 0, maxdepth = 10^18){
+  ad &lt;- extract.gt(vcf, element = &#39;AD&#39;) 
+  gt &lt;- extract.gt(vcf, element = &#39;GT&#39;)
+  dp &lt;-  extract.gt(vcf, element = &#39;DP&#39;)
+  dp &lt;- dp %&gt;% as_tibble(rownames = &quot;SITE&quot;) %&gt;%
+    pivot_longer(cols = c(2:(ncol(dp) + 1)), names_to =
+                   &quot;Sample&quot;, values_to = &quot;DP&quot;)
+  filtered &lt;- dp %&gt;% 
+    group_by(SITE) %&gt;% 
+    summarize(mean_DP = mean(as.numeric(DP), na.rm = TRUE)) %&gt;% 
+    filter(mean_DP &gt;= mindepth &amp; mean_DP &lt;= maxdepth)
+ 
+  #remove homozygous sites so they don&#39;t overwhelm the plot
+  hets &lt;- is_het(gt)
+  is.na( ad[!hets] ) &lt;- TRUE
+  ad1 &lt;- masplit(ad, record = 1)
+  ad2 &lt;- masplit(ad, record = 2)
+  ab1 &lt;- ad1 / (ad1 + ad2)
+  ab2 &lt;- ad2 / (ad1 + ad2)
+  ab1 &lt;- as_tibble(ab1, rownames = &quot;SITE&quot;) %&gt;%
+    pivot_longer(cols = c(2:ncol(ab1)), 
+               names_to = &quot;name&quot;, 
+               values_to = &quot;AF&quot;) %&gt;% 
+    filter(SITE %in% pull(filtered, SITE))
+
+  ab2 &lt;- as_tibble(ab2, rownames = &quot;SITE&quot;) %&gt;%
+    pivot_longer(cols = c(2:ncol(ab2)), 
+               names_to = &quot;name&quot;, 
+               values_to = &quot;AF&quot;) %&gt;% 
+    filter(SITE %in% pull(filtered, SITE))
+  ggplot() + 
+    geom_histogram(data = ab1, 
+                 aes(x = AF), 
+                 fill = &quot;#3271a8&quot;, 
+                 alpha = .75, 
+                 binwidth = .02) + 
+    geom_histogram(data = ab2, 
+                 aes(x = AF), 
+                 fill = &quot;#FFD333&quot;, 
+                 alpha = .75, 
+                 binwidth = .02) +
+    labs(title = paste(&quot;Allele Frequency Distribution for Alleles 1 and 2\n for &quot;, sample_name),
+       x = &quot;Allele Frequency&quot;) + 
+    theme_minimal() +
+    theme(plot.title = element_text(face = &quot;bold&quot;, 
+                                  hjust = .5)) 
+
+}</code></pre>
+<p>Here we see how the allele frequency distribution changes when we use a minimum depth threshold of 50 and maximum depth threshold of 1000.</p>
+<pre class="r"><code>get_AB_filtered_depth(loxodes_pooled_98_10, 
+                      sample_name = &quot;Loxodes (MINID98, Pooled Reference, 50 &lt; Depth &lt; 1000)&quot;, 
+                      mindepth = 50, 
+                      maxdepth = 1000)</code></pre>
+<p><img src="Ploidy_tutorial_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>It can also be useful to filter based on the number of individuals that support a variant. A paper by <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/jeu.12746">Chen et al</a> found that sites supported by 3 or more individuals were reliable.</p>
+<pre class="r"><code>#takes the mandatory argument of the vcfR object and the optional argument of the minimum number of samples (individuals) supporting a site for it to be kept
+#returns a vector of sites supported by greater than or equal to the given number of individuals
+get_filtered_sites &lt;- function(vcf, min_samples = 3){
+  #extract allele depth information for each site
+  ad &lt;- extract.gt(vcf, element = &#39;AD&#39;)
+  samples &lt;- ad %&gt;% 
+    as_tibble(rownames = &quot;ID&quot;) %&gt;% 
+    pivot_longer(cols = 2:(ncol(ad) + 1), names_to = &quot;Sample&quot;) %&gt;%
+    #filter out rows corresponding to individuals that lack data for a site
+    filter(is.na(value) == FALSE) %&gt;% 
+    group_by(ID) %&gt;% 
+    summarize(num_samples = n()) %&gt;% 
+    #only keep sites supported by the minimum threshold given or greater
+    filter(num_samples &gt;= min_samples) %&gt;% 
+    pull(ID)
+  
+}</code></pre>
+<p>Once we have the vector of sites, we can use the following function to generate the allele balance plots.</p>
+<pre class="r"><code>#takes mandatory argument vcfR object, optional argument sample_name (information to be included in the title), and vector of filtered_sites (generated by the function get_filtered_sites)
+get_AB_filtered_individuals &lt;- function(vcf, sample_name = &quot;&quot;, filtered_sites){
+  ad &lt;- extract.gt(vcf, element = &#39;AD&#39;) 
+  gt &lt;- extract.gt(vcf, element = &#39;GT&#39;)
+  #remove homozygous sites so they don&#39;t overwhelm the plot
+  hets &lt;- is_het(gt)
+  is.na( ad[!hets] ) &lt;- TRUE
+  ad1 &lt;- masplit(ad, record = 1)
+  ad2 &lt;- masplit(ad, record = 2)
+  ab1 &lt;- ad1 / (ad1 + ad2)
+  ab2 &lt;- ad2 / (ad1 + ad2)
+  ab1 &lt;- as_tibble(ab1, rownames = &quot;SITE&quot;) %&gt;%
+    pivot_longer(cols = c(2:ncol(ab1)), 
+               names_to = &quot;name&quot;, 
+               values_to = &quot;AF&quot;) %&gt;% 
+    filter(SITE %in% filtered_sites)
+
+  ab2 &lt;- as_tibble(ab2, rownames = &quot;SITE&quot;) %&gt;%
+    pivot_longer(cols = c(2:ncol(ab2)), 
+               names_to = &quot;name&quot;, 
+               values_to = &quot;AF&quot;) %&gt;% 
+    filter(SITE %in% filtered_sites)
+  
+  ggplot() + 
+    geom_histogram(data = ab1, 
+                 aes(x = AF), 
+                 fill = &quot;#3271a8&quot;, 
+                 alpha = .75, 
+                 binwidth = .02) + 
+    geom_histogram(data = ab2, 
+                 aes(x = AF), 
+                 fill = &quot;#FFD333&quot;, 
+                 alpha = .75, 
+                 binwidth = .02) +
+    labs(title = paste(&quot;Allele Frequency Distribution for Alleles 1 and 2\n for &quot;, sample_name),
+       x = &quot;Allele Frequency&quot;) + 
+    theme_minimal() +
+    theme(plot.title = element_text(face = &quot;bold&quot;, 
+                                  hjust = .5)) 
+  
+  
+
+}</code></pre>
+<p>Here is an example call to these functions with the Loxodes data.</p>
+<pre class="r"><code>lox_sites &lt;- get_filtered_sites(loxodes_pooled_98_10, min_samples = 3)
+get_AB_filtered_individuals(loxodes_pooled_98_10, sample_name = &quot;Loxodes (MINID98, Pooled Reference, &gt; 3 Individuals)&quot;, filtered_sites = lox_sites)</code></pre>
+<p><img src="Ploidy_tutorial_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Keep in mind the patterns we see may not always be clear for complex organisms like ciliates. Elements of their biology - such as endopolyploidy - can complicate these analyses. However, getting a glimpse of the balance between the top two most abundant alleles provides useful information about an organism.</p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

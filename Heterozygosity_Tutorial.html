@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Heterozygosity Analysis Tutorial</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Analysis of Genetic Diversity in Ciliates</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Heterozygosity_Tutorial.html">Heterozygosity Tutorial</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Heterozygosity Analysis Tutorial</h1>
+
+</div>
+
+
+<p>First, we’ll load the needed libraries.</p>
+<pre class="r"><code>library(tidyverse)
+library(vcfR)
+library(scales)
+library(reshape2)
+library(wesanderson)</code></pre>
+<p>Then, we’ll read in the input data. For the heterozygosity analysis here, we’ll just need the vcfR object.</p>
+<pre class="r"><code>#reading in vcfR object for 5 halteria individuals (MINID90)
+halteria_90 &lt;- read.vcfR(&quot;./Data/halteria/all_filtered_halt_90.vcf&quot;)
+#defining a color to use for halteria plots for clarity
+halt_color = &quot;#964b69&quot;
+
+
+#reading in vcfR object for 5 chilodonella individuals (MINID90)
+chilo_90 &lt;- read.vcfR(&quot;./Data/chilo/all_filtered_chilo_90.vcf&quot;)
+#defining a color to use for chilodonella plots for clarity
+chilo_color = &quot;#1ea8d6&quot;</code></pre>
+<p>Here are the functions needed to do the analysis.</p>
+<pre class="r"><code>#get filtered genetic differentiation data frame
+#takes the mandatory arguments a vcfR and population factor, and optional argument AB_filter so you can filter out low AB sites (more likely to be spurious)
+
+get_filtered_diff &lt;- function(vcfR, pops, AB_filter = .2) {
+  #extract tidy data frame from vcfR object
+  vcf_tidy &lt;- vcfR2tidy(vcfR, single_frame = TRUE, info_types = TRUE, format_types = TRUE)[[&quot;dat&quot;]]
+  
+  #get vector containing all polymorphisms with allele balance &gt; .2 
+  filter_vector &lt;- vcf_tidy %&gt;%
+    filter(AB &gt; AB_filter | AB == 0) %&gt;% 
+    select(CHROM, POS, AB) %&gt;% 
+    mutate(ID = paste(CHROM, POS, sep=&quot;_&quot;)) %&gt;% 
+    pull(ID)
+  
+  #get the genetic diff object containing only the polymorphisms with allele balance &gt; .2
+  genetic_diff(vcfR, pops = pops,
+               method = &#39;nei&#39;) %&gt;%
+    mutate(ID = paste(CHROM, POS, sep = &quot;_&quot;)) %&gt;%
+    filter(ID %in% filter_vector)
+}
+
+
+
+#plot mean heterozygosity for each LKH sample 
+#takes mandatory argument of the genetic_diff data frame (generated by the previous function), optional argument species_name (what you want included in the title), and optional argument fill
+
+plot_mean_heterozygosity &lt;- function(genetic_diff, species_name = &quot;&quot;, fill = &quot;#3f15a1&quot;) {
+  het_columns &lt;- genetic_diff %&gt;% 
+    select(starts_with(&quot;Hs&quot;))
+  #takes average of heterozygosity values for each individual
+  genetic_diff_summary &lt;- round(colMeans(het_columns, na.rm = TRUE), digits = 4)
+  genetic_diff_summary &lt;- tibble(&quot;names&quot; = colnames(het_columns), &quot;values&quot; = genetic_diff_summary)
+  
+  genetic_diff_summary %&gt;% 
+    ggplot() + geom_bar(aes(x = names, y = values), 
+                        stat = &quot;identity&quot;, 
+                        fill = fill) + 
+    geom_label(aes(label = values, 
+                 x = names, 
+                 y = values)) +
+  labs(title = paste(&quot;Mean Heterozygosities for&quot;, species_name),
+       y = &quot;Mean Heterozygosity&quot;,
+       x = &quot;Sample&quot;) +
+  theme_minimal() + 
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5))
+
+}
+
+
+
+#plot GST and G&#39;ST distribution 
+#takes mandatory argument genetic_diff data frame, optional argument species_name, and optional argument fill
+plot_gst &lt;- function(genetic_diff, 
+                     species_name = &quot;&quot;, 
+                     fill = &quot;#3f15a1&quot;) {
+  
+  vars &lt;- c(&quot;Gst&quot;, &quot;Gprimest&quot;)
+  mdf &lt;- melt(genetic_diff[vars], varnames = c(&#39;Index&#39;, &#39;Sample&#39;),
+              value.name = &#39;Depth&#39;,
+              na.rm = TRUE)
+  mdf %&gt;% 
+    ggplot(aes(x = variable, y = Depth)) +
+  geom_violin(fill = fill) + 
+  theme_minimal() + 
+  labs(title = paste(&quot;Gst and G&#39;st Distribution\n&quot;, species_name),
+                         x = NULL, y = NULL) +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5))
+}
+
+
+
+#plot heterozygosity distribution for each individual
+#takes arguments genetic_diff data frame, species_name, and optional argument fill
+plot_het &lt;- function(genetic_diff, 
+                     species_name = &quot;&quot;, 
+                     fill = &quot;#3f15a1&quot;) {
+  vars &lt;- genetic_diff %&gt;% select(starts_with(&quot;Hs&quot;)) %&gt;% colnames()
+  mdf &lt;- melt(genetic_diff[vars], varnames = c(&#39;Index&#39;, &#39;Sample&#39;),
+              value.name = &#39;Depth&#39;,
+              na.rm = TRUE)
+  mdf %&gt;% 
+    ggplot(aes(x = variable, y = Depth)) +
+  geom_violin(fill = fill) + 
+  theme_minimal() + 
+  labs(title = paste(&quot;Heterozygosity Distribution\n&quot;, species_name),
+                         x = NULL, y = NULL) +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5))
+  
+                     }</code></pre>
+<p>To get the genetic differentiation information, we supply the population information as a factor and the vcfR object to the get_filtered_diff function. This looks at only sites with an allele balance greater than .2, or whatever minimum allele balance value you supply (but still including homozygous sites). If you want the genetic differentiation information without this filter, use the argument AB_filter = 0.</p>
+<pre class="r"><code>#store the population information as a factor - make sure they are in the same order as they appear in the vcf file
+pop_halt &lt;- as.factor(c(&quot;LKH576&quot;, &quot;LKH564&quot;, &quot;LKH555&quot;, &quot;LKH545&quot;, &quot;LKH552&quot;))
+pop_chilo &lt;- as.factor(c(&quot;LKH654&quot;, &quot;LKH639&quot;, &quot;LKH661&quot;, &quot;LKH563&quot;, &quot;LKH575&quot;))
+
+#call filter function to get filtered genetic diff data frame
+halt_Diff_filtered &lt;- get_filtered_diff(halteria_90, pops =  pop_halt)
+
+chilo_Diff_filtered &lt;- get_filtered_diff(chilo_90, pops =  pop_chilo)
+
+
+#call genetic_diff function to get unfiltered genetic diff data frame
+halt_Diff_unfiltered &lt;- get_filtered_diff(halteria_90, pops = pop_halt, AB_filter = 0)
+
+chilo_Diff_unfiltered &lt;- get_filtered_diff(chilo_90, pops = pop_chilo, AB_filter = 0)</code></pre>
+<p>Now that we have the genetic differentiation information, we can begin visualizing the data.</p>
+<p>Here, we look at the mean heterozygosities for each LKH sample. For comparing across organisms, it will be crucial to keep the axis the same.</p>
+<pre class="r"><code>#include any information you want in the title of the plot under the species_name argument (for example, parameters like depth or minimimum identity)
+
+plot_mean_heterozygosity(halt_Diff_filtered, species_name = &quot;Halteria (MINID 90, AB &gt; 0.2) &quot;, fill = halt_color) + ylim(0,.25)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>plot_mean_heterozygosity(halt_Diff_unfiltered, species_name = &quot;Halteria (MINID 90) &quot;, fill = halt_color) + ylim(0,.25)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre class="r"><code>plot_mean_heterozygosity(chilo_Diff_filtered, species_name = &quot;Chilodonella (MINID90, AB &gt; 0.2)&quot;, fill = chilo_color) + ylim(0, .25)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
+<pre class="r"><code>plot_mean_heterozygosity(chilo_Diff_unfiltered, species_name = &quot;Chilodonella (MINID 90) &quot;, fill = chilo_color) + ylim(0,.25)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
+<p>Then, we can make violin plots to visualize the distributions of GST, G’ST, and heterozygosity.</p>
+<pre class="r"><code>#call plot_gst function to plot GST and G&#39;ST distribution (violin plot)
+plot_gst(halt_Diff_unfiltered, species_name = &quot;Halteria (MINID 90)&quot;, fill = halt_color) + ylim(0, 1)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>plot_gst(chilo_Diff_unfiltered, species_name = &quot;Chilodonella (MINID 90)&quot;, fill = chilo_color) + ylim(0, 1)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>#call plot_het function to plot the heterozygosity distribution (violin plot)
+plot_het(halt_Diff_unfiltered, species_name = &quot;Halteria (MINID 90)&quot;, fill = halt_color)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
+<pre class="r"><code>plot_het(chilo_Diff_unfiltered, species_name = &quot;Chilodonella (MINID 90)&quot;, fill = chilo_color)</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-6-4.png" width="672" /></p>
+<p>As we analyze heterozygosity, it can be helpful to look at the genotypes called for the different individuals.</p>
+<pre class="r"><code>#using the extract.gt function to get the genotype information 
+gt_halt &lt;- extract.gt(halteria_90, element = &quot;GT&quot;) %&gt;%
+  #convert to tibble format so we can use pivot_longer() function
+  as_tibble() %&gt;% 
+  #convert the data to tidy format 
+  pivot_longer(cols = starts_with(&quot;LKH&quot;), names_to = &quot;Sample&quot;, values_to = &quot;GT&quot;)
+
+gt_chilo &lt;- extract.gt(chilo_90, element = &quot;GT&quot;) %&gt;%
+  #convert to tibble format so we can use pivot_longer() function
+  as_tibble() %&gt;% 
+  #convert the data to tidy format 
+  pivot_longer(cols = starts_with(&quot;LKH&quot;), names_to = &quot;Sample&quot;, values_to = &quot;GT&quot;)</code></pre>
+<p>Now that we have a tidy data frame (tibble), we can plot it. Here, we use facet_wrap to plot small multiples to split the plots up by sample.</p>
+<pre class="r"><code>#one way to visualize the data - faceting (creating small multiples)
+gt_halt %&gt;% 
+  filter(is.na(GT) == FALSE) %&gt;% 
+  ggplot() + 
+  geom_histogram(aes(x = GT, 
+                     fill = substr(Sample, 1, 7)), 
+                 stat = &quot;count&quot;) + theme_minimal() + 
+  labs(x = &quot;Genotype&quot;, 
+       title = &quot;Genotype Distribution for Halteria (MINID 90)&quot;) + theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), legend.title = element_blank()) +
+  #split the plot into groups based on Sample (1 plot for each sample)
+  #substr() just makes the titles more neat by only plotting the first 7 characters of the sample name
+  facet_wrap(~substr(Sample, 1, 7), nrow = n_distinct(gt_halt %&gt;% pull(Sample))) + 
+  scale_fill_manual(values = wes_palette(&quot;Rushmore1&quot;))</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>gt_chilo %&gt;% 
+  filter(is.na(GT) == FALSE) %&gt;% 
+  ggplot() + 
+  geom_histogram(aes(x = GT, 
+                     fill = substr(Sample, 1, 7)), 
+                 stat = &quot;count&quot;) + theme_minimal() + 
+  labs(x = &quot;Genotype&quot;, 
+       title = &quot;Genotype Distribution for Chilodonella (MINID 90)&quot;) + theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), legend.title = element_blank()) +
+  #split the plot into groups based on Sample (1 plot for each sample)
+  #substr() just makes the titles more neat by only plotting the first 7 characters of the sample name
+  facet_wrap(~substr(Sample, 1, 7), nrow = n_distinct(gt_halt %&gt;% pull(Sample))) + 
+  scale_fill_manual(values = wes_palette(&quot;Rushmore1&quot;))</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<pre class="r"><code>#another way to visualize the data - a stacked bar chart
+gt_chilo %&gt;% 
+  #removing NA values
+  filter(is.na(GT) == FALSE) %&gt;%
+  #create ggplot object
+  ggplot() + 
+  #plot histogram based on count of each type of genotype call
+  #fill is mapped to sample
+  geom_histogram(aes(x = GT, 
+                     fill = substr(Sample, 1, 7)), 
+                 stat = &quot;count&quot;) + theme_minimal() + 
+  #add title and x axis label
+  labs(x = &quot;Genotype&quot;, 
+       title = &quot;Genotype Distribution for Chilodonella (MINID 90)&quot;) + theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), legend.title = element_blank()) + scale_fill_manual(values = wes_palette(&quot;Rushmore1&quot;))</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-8-3.png" width="672" /></p>
+<pre class="r"><code>gt_halt %&gt;% 
+  #removing NA values
+  filter(is.na(GT) == FALSE) %&gt;%
+  #create ggplot object
+  ggplot() + 
+  #plot histogram based on count of each type of genotype call
+  #fill is mapped to sample
+  geom_histogram(aes(x = GT, 
+                     fill = substr(Sample, 1, 7)), 
+                 stat = &quot;count&quot;) + theme_minimal() + 
+  #add title and x axis label
+  labs(x = &quot;Genotype&quot;, 
+       title = &quot;Genotype Distribution for Halteria (MINID 90)&quot;) + theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), legend.title = element_blank()) + scale_fill_manual(values = wes_palette(&quot;Rushmore1&quot;))</code></pre>
+<p><img src="Heterozygosity_Tutorial_files/figure-html/unnamed-chunk-8-4.png" width="672" /></p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Snpeff Analysis Tutorial</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Analysis of Genetic Diversity in Ciliates</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Heterozygosity_Tutorial.html">Heterozygosity Tutorial</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Snpeff Analysis Tutorial</h1>
+
+</div>
+
+
+<p>After running SnpEff, we have an annotated vcf file. However, there can be different numbers of columns for different variants, because some variants are labelled with multiple effects.</p>
+<p>This complicates reading the vcf file into R. However, SnpSift offers a simple solution, and is already installed once you’ve installed SpnEff.</p>
+<p>The vcfEffOnePerLine.pl script generates a tab delimited file where each annotated effect is on a different line. We can easily read this file into R.</p>
+<p>To get this tsv file, navigate to SnpEff where the annotated vcf file is, and run a command like the following.</p>
+<pre class="bash"><code>
+cat  annotated_vcf_file \
+| ./scripts/vcfEffOnePerLine.pl \
+| path/to/java -jar SnpSift.jar extractFields - CHROM ID POS REF ALT NS AC AB DP &quot;ANN[*].ALLELE&quot; &quot;ANN[*].EFFECT&quot; &quot;ANN[*].IMPACT&quot; &quot;ANN[*].BIOTYPE&quot; &quot;ANN[*].RANK&quot;  &gt; annotated_tsv_file 
+</code></pre>
+<p>Now we can analyze the data in R.</p>
+<pre class="r"><code>library(tidyverse)
+library(vcfR)
+library(wesanderson)
+
+#load vcf as vcfR object
+lox_98  &lt;- read.vcfR(&quot;./Data/loxodes_pooled/all_filtered_98.vcf&quot;)
+#read in annotated vcf data (in tsv format)
+lox_ann &lt;- read_tsv(&quot;./Data/loxodes_pooled/lox_98_CDS_filtered_3&quot;)</code></pre>
+<p>One useful aspect of our data to be familiar with is how well supported variants are by individuals.</p>
+<p>Here, we look at the distribution of how many individuals support a variant with the plot_num_sample_distribution function. We can see that many variant sites are supported by 10 individuals, and we still retain most data by filtering out sites supported by 3 individuals or fewer individuals.</p>
+<pre class="r"><code>plot_num_sample_distribution &lt;- function(vcf, sample_name = &quot;&quot;, fill = &quot;#4a779e&quot;) {
+  ad &lt;- extract.gt(vcf, element = &#39;AD&#39;)
+  samples &lt;- ad %&gt;% 
+    as_tibble(rownames = &quot;ID&quot;) %&gt;% 
+    pivot_longer(cols = 2:(ncol(ad) + 1), names_to = &quot;Sample&quot;) %&gt;% 
+    filter(is.na(value) == FALSE) %&gt;% 
+    group_by(ID) %&gt;% 
+    summarize(num_samples = n())
+  samples %&gt;% ggplot() + 
+    geom_histogram(aes(x = num_samples), stat =&quot;count&quot;, fill = fill) + 
+    labs(x = &quot;Number of Samples&quot;, y = &quot;Number of Polymorphisms&quot;, title = paste(&quot;Distribution of Sample Count for &quot;, sample_name)) +
+    theme_minimal() +
+           theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5)) + scale_x_continuous(breaks = (0:ncol(ad))) 
+}
+
+plot_num_sample_distribution(lox_98, sample_name = &quot;Loxodes (MINID98)&quot;, fill = &quot;#568D55&quot;)</code></pre>
+<p><img src="SnpEff_tutorial_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Now we can make a simple plot to look at the effect of the variants, as annotated by SnpEff. The majority are synonymous (no amino acid change) and missense (amino acid change) which would be expected.</p>
+<pre class="r"><code>lox_ann %&gt;% 
+  group_by(`ANN[*].EFFECT`) %&gt;% 
+  summarize(Count = n()) %&gt;% 
+  ggplot(aes(x = `ANN[*].EFFECT`, 
+             y = Count)) + 
+  geom_bar(stat = &quot;identity&quot;, fill = &quot;#568D55&quot;) + 
+  theme_minimal() +
+  labs(title = &quot;Loxodes: Distribution of Variant Effects&quot;) +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5))</code></pre>
+<p><img src="SnpEff_tutorial_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We can look at the type of variant in addition to its effect. As expected, the vast majority of variants are single nucleotide polymorphisms.</p>
+<pre class="r"><code>lox_ann_type &lt;- lox_ann %&gt;% 
+  mutate(TYPE = case_when(
+    nchar(ALT) == 1 &amp; nchar(REF) == 1 ~ &quot;SNP&quot;, 
+    nchar(ALT) &gt; nchar(REF) ~ &quot;INS&quot;,
+    nchar(REF) &gt; nchar(ALT) ~ &quot;DEL&quot;,
+    nchar(ALT) == nchar(REF) &amp; nchar(ALT) != 1 ~ &quot;MNP&quot;
+                          ),
+    GENE_FAMILY = substr(CHROM, 
+                         start = nchar(CHROM) - 9, 
+                         stop = nchar(CHROM)))
+
+
+lox_ann_type %&gt;% 
+  group_by(`ANN[*].EFFECT`, TYPE) %&gt;% 
+  summarize(Count = n()) %&gt;% 
+  ggplot(aes(x = str_replace_all(`ANN[*].EFFECT`, &quot;_&quot;, &quot;\n&quot;), 
+             y = Count, 
+             fill = TYPE)) + 
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(x = NULL, y = &quot;Frequency&quot;, 
+       title = &quot;Distribution of Variant Types for Loxodes\n (MINID 98, Pooled Reference)&quot;) + 
+  theme_minimal() +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), 
+        axis.text.x = element_text(size = 10)) + 
+  scale_fill_manual(values = wes_palette(&quot;GrandBudapest2&quot;))</code></pre>
+<p><img src="SnpEff_tutorial_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We can look at the distribution of impact levels as well. This is a simple categorization done by SnpEff to estimate the extent of the impact of the variant. Synonymous variants, for example, are classified as having low impact, missense variants as moderate impact, and frameshift variants as high impact.</p>
+<pre class="r"><code>lox_ann %&gt;% 
+  group_by(`ANN[*].IMPACT`) %&gt;% 
+  summarize(Count = n()) %&gt;% 
+  ggplot(aes(x = factor(`ANN[*].IMPACT`, levels = c(&quot;HIGH&quot;, &quot;MODERATE&quot;, &quot;LOW&quot;)), 
+             y = Count)) + 
+  geom_bar(stat = &quot;identity&quot;, fill = &quot;#568D55&quot;) + 
+  labs(x = NULL, 
+       y = &quot;Frequency&quot;, 
+       title = &quot;Distribution of Impact Levels for Loxodes\n (MINID 98, Pooled Reference)&quot;) + 
+  theme_minimal() +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), 
+        axis.text.x = element_text(size = 10))</code></pre>
+<p><img src="SnpEff_tutorial_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>There is significant variation in the number of polymorphisms per gene family. Once we look at the distribution, it may be interesting to look further into the gene families with a high degree of polymorphism.</p>
+<pre class="r"><code>lox_ann_type %&gt;% 
+  group_by(GENE_FAMILY) %&gt;% 
+  summarize(n = n()) %&gt;% 
+  ggplot(aes(x = n)) + 
+  geom_bar(stat = &quot;count&quot;) + 
+  scale_x_continuous(breaks = seq(0, 150, by = 10),
+                     labels = seq(0, 150, by = 10)) + 
+  labs(x = &quot;Number of Polymorphisms in Gene Family&quot;,
+       y = &quot;Frequency&quot;,
+       title = &quot;Distribution of Number of Polymorphisms\n per Gene Family&quot;) +
+  theme_minimal() + 
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5))</code></pre>
+<p><img src="SnpEff_tutorial_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>By joining the annotated vcf data with the nucleotide diversity data, we can look at how nucleotide diversity differs for different kinds of variants. It’s important to filter to prevent missing data from clouding the analyses.</p>
+<pre class="r"><code>nuc_div &lt;- read_tsv(&quot;./Data/loxodes_pooled/nuc_div.sites.pi&quot;)
+
+lox_ann_div &lt;- lox_ann_type %&gt;% 
+  left_join(nuc_div, by = c(&quot;CHROM&quot; = &quot;CHROM&quot;, &quot;POS&quot; = &quot;POS&quot;))
+
+
+#takes vcfR object, minimum number of samples that must have a variant, and minimum number of samples that must have a called genotype 
+get_twice_filtered_sites &lt;- function(vcf, min_var = 3, min_geno = 3) {
+  ad &lt;- extract.gt(vcf, element = &#39;AD&#39;)
+  samples_ad &lt;- ad %&gt;% 
+    as_tibble(rownames = &quot;ID&quot;) %&gt;% 
+    pivot_longer(cols = 2:(ncol(ad) + 1), names_to = &quot;Sample&quot;) %&gt;% 
+    filter(is.na(value) == FALSE) %&gt;% 
+    group_by(ID) %&gt;% 
+    summarize(num_samples = n()) %&gt;% 
+    filter(num_samples &gt;= min_var) %&gt;% 
+    pull(ID)
+  
+  gt &lt;- extract.gt(vcf, element = &#39;GT&#39;)
+  samples_gt &lt;- gt %&gt;% 
+    as_tibble(rownames = &quot;ID&quot;) %&gt;% 
+    pivot_longer(cols = 2:(ncol(ad) + 1), names_to = &quot;Sample&quot;) %&gt;% 
+    filter(is.na(value) == FALSE) %&gt;% 
+    group_by(ID) %&gt;% 
+    summarize(num_samples = n()) %&gt;% 
+    filter(num_samples &gt;= min_geno) %&gt;% 
+    pull(ID)
+  
+  intersect(samples_gt, samples_ad)
+  
+}
+
+#get filtered sites
+lox_filtered_sites &lt;- get_twice_filtered_sites(lox_98)
+
+#plotting nucleotide diversity distribution for synonymous, missense, and frameshift variants
+lox_ann_div %&gt;% 
+  mutate(ID = paste(CHROM, POS, sep = &quot;_&quot;)) %&gt;% 
+  filter(ID %in% lox_filtered_sites) %&gt;%
+  filter(`ANN[*].EFFECT` == &quot;synonymous_variant&quot; | 
+           `ANN[*].EFFECT` == &quot;missense_variant&quot; | 
+           `ANN[*].EFFECT` == &quot;frameshift_variant&quot;) %&gt;% 
+  ggplot(aes(x = PI)) + 
+  geom_histogram() + 
+  facet_wrap(~str_replace(`ANN[*].EFFECT`, &quot;_&quot;, &quot; &quot;)) + 
+  theme_minimal() + 
+  labs(x = &quot;Pi&quot;, y = &quot;Frequency (Number of Polymorphisms)&quot;, title = &quot;Nucleotide Diversity Distribution for Nonsynonymous and Synonymous Variants&quot;) + 
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), 
+        panel.border = element_rect(color = &quot;black&quot;, fill = NA))</code></pre>
+<p><img src="SnpEff_tutorial_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Here, we look at the distribution of minor allele frequency for synonymous and nonsynonymous variants. A higher proportion of low-frequency variants in non-synonymous SNPs is predicted under purifying selection on nonsynonymous SNPs, as discussed in <a href="https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1003457">this paper by Gayral et al</a>.</p>
+<p>Note that SnpEff uses the term ‘missense’ to refer to variants that produce an amino acid change.</p>
+<pre class="r"><code>#extract allele depth information
+ad &lt;- extract.gt(lox_98, element = &quot;AD&quot;)
+#get depth of most abundant allele
+ad1 &lt;- masplit(ad, record = 1)
+#get depth of second most abundant allele 
+ad2 &lt;- masplit(ad, record = 2)
+#get allele balance for minor allele (second most abundant allele)
+ab2 &lt;- ad2 / (ad1 + ad2)
+#convert allele balance data to tibble to facilitate joining 
+ab2 &lt;- ab2 %&gt;% 
+  as_tibble(rownames = &quot;ID&quot;)
+
+#join allele balance data with nucleotide diversity data 
+minor_af_joined &lt;- lox_ann %&gt;% 
+  mutate(ID = paste(CHROM, POS, sep = &quot;_&quot;)) %&gt;% 
+  inner_join(ab2, by = c(&quot;ID&quot; = &quot;ID&quot;))
+
+#converting data to tidy format
+#change the cols argument to whatever columns correspond to the cell names (ex: LKH560)
+minor_af_joined &lt;- pivot_longer(minor_af_joined, 
+                                cols = 17:26, 
+                                names_to = &quot;Individual&quot;, 
+                                values_to = &quot;Minor_AF&quot;)
+
+
+#plot just missense and synonymous variants 
+minor_af_joined %&gt;% 
+  filter(`ANN[*].EFFECT` == &quot;missense_variant&quot; | `ANN[*].EFFECT` == &quot;synonymous_variant&quot;) %&gt;%
+  ggplot(aes(x = Minor_AF)) + 
+  geom_histogram() + 
+  facet_wrap(~`ANN[*].EFFECT`) + 
+  scale_x_continuous(limits = c(0, .5)) + 
+  scale_y_continuous(limits = c(0, 750)) +
+  theme_minimal() +
+  theme(strip.background = element_rect(fill = &quot;#e3edfc&quot;, 
+                                        color = NA), 
+        plot.title = element_text(face = &quot;bold&quot;, hjust = .5)) + 
+  labs(x = &quot;Minor Allele Frequency&quot;, 
+       y = &quot;Count&quot;, 
+       title = &quot;Loxodes: Minor Allele Frequency\n for Missense and Synonymous Variants&quot;)</code></pre>
+<p><img src="SnpEff_tutorial_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>One useful measure for comparing species is the ratio of nonsynonymous nucleotide diversity to synonymous nucleotide diversity. We can calculate this as follows.</p>
+<pre class="r"><code>pi_vals &lt;- lox_ann_div %&gt;% 
+  mutate(ID = paste(CHROM, POS, sep = &quot;_&quot;)) %&gt;% 
+  filter(ID %in% lox_filtered_sites) %&gt;% 
+  group_by(`ANN[*].EFFECT`) %&gt;% 
+  summarize(sum_pi = sum(PI, na.rm = TRUE))
+
+#calculate the 
+nonsynom &lt;- pi_vals %&gt;% 
+  filter(`ANN[*].EFFECT` != &#39;synonymous_variant&#39;) %&gt;% 
+  pull(sum_pi) %&gt;% 
+  sum()
+
+synom &lt;- pi_vals %&gt;% 
+  filter(`ANN[*].EFFECT` == &#39;synonymous_variant&#39;) %&gt;%
+  pull(sum_pi)
+
+pi_ratio &lt;- nonsynom / synom
+
+pi_ratio</code></pre>
+<pre><code>## [1] 0.298626</code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

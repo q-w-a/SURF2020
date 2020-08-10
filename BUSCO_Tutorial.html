@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>BUSCO Tutorial</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Analysis of Genetic Diversity in Ciliates</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Heterozygosity_Tutorial.html">Heterozygosity Tutorial</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">BUSCO Tutorial</h1>
+
+</div>
+
+
+<p><a href="https://pubmed.ncbi.nlm.nih.gov/31020564/">BUSCO</a> (Benchmarking Universal Single-Copy Orthologs) is a software for analyzing the completeness of genomes, gene sets, and transcriptomes.</p>
+<p>Because we have such a high number of contigs, subsetting to these highly conserved BUSCO contigs can be valuable.</p>
+<p>Once we have the fasta file of BUSCO sequences, we can use a Python script to extract the contig names. You can make a script with this Python code to get a file with just the contig names.</p>
+<pre class="bash"><code>
+filename = input(&quot;Enter file name of fasta file &quot;)
+f = open(filename, &#39;r&#39;)
+text = f.readlines()
+f.close()
+
+def extract_contigs(fasta_file):
+    contigs = &#39;&#39;
+    for line in fasta_file:
+        if line[0] == &quot;&gt;&quot;:
+            contigs = contigs + line[1:] + &quot;\n&quot;
+        else:
+            pass
+    return contigs
+
+result = extract_contigs(text)
+exportfile = input(&quot;enter export file name&quot;)
+file = open(exportfile, &quot;w&quot;)
+file.write(result)
+file.close()
+</code></pre>
+<p>We can then read the file generated by the script as well as the vcf (or annotated tsv) file into R.</p>
+<pre class="r"><code>library(tidyverse)
+library(vcfR)
+library(wesanderson)
+
+lox_98 &lt;- read.vcfR(&quot;./Data/loxodes_pooled/all_filtered_98.vcf&quot;)
+lox_ann &lt;- read_tsv(&quot;./Data/loxodes_pooled/lox_98_CDS_filtered_3&quot;)
+lox_busco_contigs &lt;- read_tsv(&quot;./Data/busco_contigs&quot;, col_names = FALSE)</code></pre>
+<p>Now we can subset to only the BUSCO contigs. Then, we can add a column holding the type of the variant (single nucleotide polymorphism, insertion, etc).</p>
+<pre class="r"><code>#get BUSCO contigs as a vectors
+lox_busco_contigs_vector &lt;-  lox_busco_contigs %&gt;% pull(X1)
+
+#subset to only BUSCO contigs
+lox_busco_variants &lt;- lox_ann %&gt;% 
+  filter(CHROM %in% lox_busco_contigs_vector) 
+
+#classify the variant types
+lox_busco_variants_type &lt;- lox_busco_variants %&gt;% 
+  mutate(TYPE = case_when(
+    nchar(ALT) == 1 &amp; nchar(REF) == 1 ~ &quot;SNP&quot;, 
+    nchar(ALT) &gt; nchar(REF) ~ &quot;INS&quot;,
+    nchar(REF) &gt; nchar(ALT) ~ &quot;DEL&quot;,
+    nchar(ALT) == nchar(REF) &amp; nchar(ALT) != 1 ~ &quot;MNP&quot;
+                          ))</code></pre>
+<p>Now that we’ve subset to BUSCO variants, we can run the same kind of analyses we did with the full set of variants.</p>
+<pre class="r"><code>#distribution of impact levels for busco variants
+lox_busco_variants_type %&gt;% 
+  group_by(`ANN[*].IMPACT`, TYPE) %&gt;% 
+  summarize(Count = n()) %&gt;% 
+  ggplot(aes(x = `ANN[*].IMPACT`, y = Count, fill = TYPE)) + 
+  geom_bar(stat = &quot;identity&quot;, position = &quot;stack&quot;) + 
+  labs(x = NULL, 
+       y = &quot;Frequency&quot;, 
+       title = &quot;Distribution of Impact Levels for Loxodes Variants\n (BUSCO sequences, MINID 98, Pooled Reference)&quot;) + 
+  theme_minimal() +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), 
+        axis.text.x = element_text(size = 10)) + 
+    scale_fill_manual(values = wes_palette(&quot;GrandBudapest2&quot;)) + 
+  scale_x_discrete(limits = c(&quot;HIGH&quot;, &quot;MODERATE&quot;, &quot;LOW&quot;))</code></pre>
+<p><img src="BUSCO_Tutorial_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>#distribution of variant effects for busco variants
+lox_busco_variants_type %&gt;% 
+  group_by(`ANN[*].EFFECT`, TYPE) %&gt;% 
+  summarize(Count = n())  %&gt;% 
+  ggplot(aes(x = str_replace_all(`ANN[*].EFFECT`, &quot;_&quot;, &quot;\n&quot;), y = Count, fill = TYPE)) + 
+  geom_bar(stat = &quot;identity&quot;, position = &quot;stack&quot;) + 
+  labs(x = NULL, y = &quot;Frequency&quot;, title = &quot;Distribution of Variant Types for Loxodes \n (BUSCO sequences, MINID 98, Pooled Reference)&quot;) + 
+  theme_minimal() +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), axis.text.x = element_text(size = 10)) + 
+    scale_fill_manual(values = wes_palette(&quot;GrandBudapest2&quot;))</code></pre>
+<p><img src="BUSCO_Tutorial_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre class="r"><code>lox_busco_variants_type %&gt;% 
+  ggplot() + 
+  labs(x = &quot;Allele Balance&quot;, y = &quot;Polymorphism Count&quot;, title = &quot;Distribution of Allele Balance for BUSCO Sequences&quot;) + 
+  geom_histogram(aes(x = as.numeric(AB)), fill = &quot;#568D55&quot;) + 
+  theme_minimal() +
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5))</code></pre>
+<p><img src="BUSCO_Tutorial_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<p>We can also read in the nucleotide diversity data (generated by Vcftools) and do the same kind of analyses as done with the full set of variants. As with the nucleotide diversity analysis for the full set, filtering is crucial to ensure that the values we’re looking at aren’t just a result of missing data.</p>
+<pre class="r"><code>nuc_div &lt;- read_tsv(&quot;./Data/loxodes_pooled/nuc_div.sites.pi&quot;)
+
+lox_busco_div &lt;- lox_busco_variants_type %&gt;% 
+  left_join(nuc_div, by = c(&quot;CHROM&quot; = &quot;CHROM&quot;, &quot;POS&quot; = &quot;POS&quot;))
+
+
+#takes vcfR object, minimum number of samples that must have a variant, and minimum number of samples that must have a called genotype 
+get_twice_filtered_sites &lt;- function(vcf, min_var = 3, min_geno = 3) {
+  ad &lt;- extract.gt(vcf, element = &#39;AD&#39;)
+  samples_ad &lt;- ad %&gt;% 
+    as_tibble(rownames = &quot;ID&quot;) %&gt;% 
+    pivot_longer(cols = 2:(ncol(ad) + 1), names_to = &quot;Sample&quot;) %&gt;% 
+    filter(is.na(value) == FALSE) %&gt;% 
+    group_by(ID) %&gt;% 
+    summarize(num_samples = n()) %&gt;% 
+    filter(num_samples &gt;= min_var) %&gt;% 
+    pull(ID)
+  
+  gt &lt;- extract.gt(vcf, element = &#39;GT&#39;)
+  samples_gt &lt;- gt %&gt;% 
+    as_tibble(rownames = &quot;ID&quot;) %&gt;% 
+    pivot_longer(cols = 2:(ncol(ad) + 1), names_to = &quot;Sample&quot;) %&gt;% 
+    filter(is.na(value) == FALSE) %&gt;% 
+    group_by(ID) %&gt;% 
+    summarize(num_samples = n()) %&gt;% 
+    filter(num_samples &gt;= min_geno) %&gt;% 
+    pull(ID)
+  
+  intersect(samples_gt, samples_ad)
+  
+}
+
+
+#get filtered sites
+lox_filtered_sites &lt;- get_twice_filtered_sites(lox_98)
+
+
+#plot nucleotide diversity distribution for each variant effect
+lox_busco_div %&gt;% 
+  mutate(ID = paste(CHROM, POS, sep = &quot;_&quot;)) %&gt;% 
+  filter(ID %in% lox_filtered_sites) %&gt;%
+  ggplot(aes(x = PI)) + 
+  geom_histogram() + 
+  facet_wrap(~`ANN[*].EFFECT`) + 
+  theme_minimal() + 
+  labs(x = &quot;Pi&quot;, 
+       y = &quot;Frequency (Number of Polymorphisms)&quot;, 
+       title = &quot;Nucleotide Diversity Distribution for Different Variant Types for BUSCO Sequences&quot;) + 
+  theme(plot.title = element_text(face = &quot;bold&quot;, hjust = .5), 
+        panel.border = element_rect(color = &quot;black&quot;, fill = NA)) + 
+  scale_y_continuous(limits = c(0,5), breaks = seq(0, 5, by = 1))</code></pre>
+<p><img src="BUSCO_Tutorial_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
